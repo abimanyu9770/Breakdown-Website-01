@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breakdown Editor — Video Editing for Social Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --bg-2: #131313;
+      --card: #1c1b1b;
+      --card-2: #201f1f;
+      --chip: #2a2a2a;
+      --border: #2a2a2a;
+      --accent: #ffc20e;
+      --text: #e5e2e1;
+      --muted: #c5c9ac;
+      --danger: #ffb4ab;
+      --ink: #111111;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'Space Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 0 80px; }
+    .section { padding: 80px; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 48px;
+      line-height: 52px;
+      letter-spacing: -1.44px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .lead {
+      font-size: 15px;
+      line-height: 24px;
+      color: var(--muted);
+      max-width: 448px;
+    }
+    .mono { font-family: var(--font-mono); text-transform: uppercase; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.32px;
+      text-transform: uppercase;
+      background: var(--chip);
+      color: var(--text);
+      padding: 4px 12px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--accent); flex-shrink: 0; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      padding: 16px 48px;
+      border: 0;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); opacity: .92; }
+    .btn-primary { background: var(--accent); color: var(--ink); }
+    .btn-ghost { background: var(--chip); color: var(--text); }
+    .btn-ghost-outline {
+      background: rgba(14,14,14,.8);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 15px 25px;
+    }
+    .arrow { width: 10px; height: 10px; }
+
+    /* ---------- HEADER ---------- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(14,14,14,.9);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 1px 8px rgba(0,0,0,.04);
+    }
+    .header-inner {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 80px;
+      gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .brand img.logo { width: 36px; height: 36px; border-radius: 9999px; box-shadow: 0 0 0 1px #353534; }
+    .brand span { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: .7px; color: var(--accent); text-transform: uppercase; }
+    .avail {
+      background: var(--card);
+      padding: 4px 8px;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .avail .dot { width: 6px; height: 6px; }
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav a {
+      padding: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav a:hover { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-right .handle { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .275px; }
+    .header-cta {
+      background: var(--accent);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      padding: 8px 20px 8px 16px;
+      line-height: 14px;
+    }
+    .profile {
+      width: 36px; height: 36px; border-radius: 9999px; overflow: hidden;
+      border: 1px solid rgba(202,243,0,.4);
+      box-shadow: 0 0 0 1px #353534;
+    }
+    .profile img { width: 100%; height: 100%; object-fit: cover; }
+    .menu-toggle {
+      display: none;
+      background: none; border: 0; color: var(--text);
+      font-size: 22px; cursor: pointer;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      position: relative;
+      min-height: 880px;
+      padding: 80px 128px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(42,42,42,.6);
+      overflow: hidden;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .hero-bg img {
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
+      height: 100%; width: auto; min-width: 100%;
+      object-fit: cover;
+      opacity: .85;
+      filter: grayscale(1) contrast(1.05);
+    }
+    .hero-bg::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to top, #080808 0%, rgba(8,8,8,.4) 50%, rgba(8,8,8,0) 100%);
+    }
+    .hero-bg::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(8,8,8,.9), rgba(8,8,8,0) 60%, rgba(8,8,8,.9));
+    }
+    .hero-top, .hero-body, .hero-bottom { position: relative; z-index: 1; }
+    .hero-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 16px; }
+    .hero-pill {
+      background: rgba(14,14,14,.8);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 7px 13px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px;
+      text-transform: uppercase; color: var(--text);
+    }
+    .hero-pill img { width: 20px; height: 20px; border-radius: 9999px; }
+    .hero-pill-plain {
+      background: rgba(14,14,14,.8);
+      border: 1px solid var(--border);
+      padding: 5px 13px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px;
+      text-transform: uppercase; color: var(--text);
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .hero-body { max-width: 768px; margin: 96px 0; }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(14,14,14,.9);
+      border: 1px solid rgba(202,243,0,.4);
+      padding: 6px 11px;
+      font-family: var(--font-mono); font-weight: 700; font-size: 11px;
+      letter-spacing: 1.1px; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 80px;
+      line-height: 84px;
+      letter-spacing: -3.2px;
+      text-transform: uppercase;
+      color: var(--text);
+      filter: drop-shadow(0 25px 12.5px rgba(0,0,0,.15));
+    }
+    .hero h1 .accent { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(255,194,14,.3); text-decoration-thickness: 8px; text-underline-offset: 6px; }
+    .hero-sub {
+      margin-top: 24px;
+      max-width: 672px;
+      background: rgba(14,14,14,.6);
+      backdrop-filter: blur(2px);
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 18px; line-height: 28px; letter-spacing: -.18px;
+      color: var(--text);
+    }
+    .hero-ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-bottom {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+      border-top: 1px solid rgba(42,42,42,.6);
+      padding-top: 17px;
+    }
+    .hero-bottom .left { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--text); }
+    .hero-bottom .right { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--accent); }
+
+    /* ---------- SHOWREEL ---------- */
+    .showreel-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 48px; flex-wrap: wrap; }
+    .showreel-stage { background: #201f1f; padding: 12px; }
+    .showreel-frame { position: relative; background: #2a2a2a; padding: 24px; aspect-ratio: 16 / 9; overflow: hidden; }
+    .showreel-frame > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .showreel-frame::after { content: ""; position: absolute; inset: 0; background: rgba(14,14,14,.6); backdrop-filter: blur(1px); }
+    .showreel-top, .showreel-bottom { position: absolute; left: 24px; right: 24px; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .showreel-top { top: 24px; }
+    .showreel-bottom { bottom: 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .showreel-tags { display: flex; gap: 8px; }
+    .showreel-tags span { background: var(--chip); color: var(--text); padding: 2px 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; }
+    .play-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 2; }
+    .play-btn {
+      width: 96px; height: 96px; border-radius: 9999px; background: var(--accent);
+      border: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;
+      backdrop-filter: blur(6px);
+    }
+    .play-btn svg { width: 22px; height: 28px; margin-left: 6px; }
+    .play-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text); }
+
+    /* ---------- WHAT I EDIT ---------- */
+    .edit-list { display: flex; flex-direction: column; gap: 8px; margin-top: 48px; }
+    .edit-row {
+      background: var(--card);
+      padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+      transition: background .2s ease;
+    }
+    .edit-row:hover { background: #242323; }
+    .edit-main { display: flex; gap: 24px; align-items: center; min-width: 0; flex: 1 1 520px; }
+    .edit-num { font-family: var(--font-mono); font-weight: 700; font-size: 14px; color: var(--accent); flex-shrink: 0; }
+    .edit-copy { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .edit-copy h3 { font-family: var(--font-display); font-weight: 600; font-size: 32px; line-height: 38px; letter-spacing: -.64px; text-transform: uppercase; color: var(--text); }
+    .edit-copy p { font-size: 15px; line-height: 24px; color: var(--muted); }
+    .edit-tag { background: var(--chip); padding: 4px 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--text); white-space: nowrap; display: flex; align-items: center; gap: 16px; }
+    .edit-tag .go { color: var(--accent); font-size: 16px; }
+
+    /* ---------- SELECTED WORK ---------- */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 40px;
+      margin-top: 48px;
+      align-items: start;
+    }
+    .work-card { background: var(--card); overflow: hidden; display: flex; flex-direction: column; }
+    .work-card.offset { margin-top: -24px; }
+    .work-media { position: relative; height: 616px; background: var(--chip); overflow: hidden; }
+    .work-media img { width: 100%; height: 100%; object-fit: cover; }
+    .work-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #0e0e0e, rgba(14,14,14,0)); }
+    .work-badge {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      background: rgba(14,14,14,.8); backdrop-filter: blur(6px);
+      padding: 4px 10px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--accent);
+    }
+    .work-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; margin-top: -24px; }
+    .work-meta { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .work-body h4 { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--accent); }
+    .work-body p { font-size: 13px; line-height: 20px; color: var(--muted); }
+
+    /* ---------- BEFORE / AFTER ---------- */
+    .ba-wrap { display: flex; flex-direction: column; gap: 24px; max-width: 1024px; margin: 48px auto 0; width: 100%; }
+    .ba-canvas {
+      position: relative; aspect-ratio: 2 / 1; background: var(--bg); overflow: hidden;
+      --split: 50%;
+    }
+    .ba-canvas .final, .ba-canvas .raw {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .ba-canvas .raw { clip-path: inset(0 calc(100% - var(--split)) 0 0); filter: grayscale(1) contrast(1.05); }
+    .ba-label {
+      position: absolute; top: 16px; z-index: 2;
+      background: rgba(14,14,14,.9);
+      padding: 4px 12px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted);
+    }
+    .ba-label.left { left: 16px; }
+    .ba-label.right { right: 16px; color: var(--accent); }
+    .ba-handle {
+      position: absolute; top: 0; bottom: 0; left: var(--split); width: 4px;
+      transform: translateX(-50%); background: var(--accent);
+      box-shadow: 0 0 12.5px rgba(255,194,14,.4); z-index: 3; pointer-events: none;
+    }
+    .ba-handle span {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 14px; height: 32px; border-radius: 9999px; background: var(--accent);
+      box-shadow: 0 8px 10px -6px rgba(0,0,0,.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink); font-family: var(--font-mono); font-size: 9px;
+    }
+    .ba-range {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: ew-resize; z-index: 4; margin: 0;
+    }
+    .ba-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding-top: 16px; }
+    .ba-col { background: var(--bg); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .ba-col.after { background: var(--card); }
+    .ba-col-head { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .ba-col.after .ba-col-head { color: var(--accent); }
+    .ba-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .ba-col li { display: flex; gap: 8px; font-size: 15px; line-height: 24px; color: var(--muted); font-family: var(--font-body); }
+    .ba-col.after li { color: var(--text); }
+    .ba-col li .mark { font-family: var(--font-mono); font-weight: 700; flex-shrink: 0; }
+    .ba-col .mark.x { color: var(--danger); }
+    .ba-col .mark.ok { color: var(--accent); }
+    .ba-cta { display: flex; justify-content: center; padding-top: 8px; }
+    .ba-cta .btn { padding: 12px 24px; font-size: 11px; letter-spacing: .55px; }
+
+    /* ---------- EDITING STYLE ---------- */
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .style-card { background: var(--card); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
+    .style-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .style-top b { font-weight: 700; font-size: 14px; letter-spacing: 1.12px; color: var(--accent); }
+    .style-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--accent); margin-top: 8px; }
+    .style-card p { font-size: 15px; line-height: 24px; color: var(--muted); }
+    .style-foot { border-top: 1px solid rgba(42,42,42,.6); padding-top: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+
+    /* ---------- SOFTWARE ---------- */
+    .tools-head { display: flex; flex-direction: column; gap: 4px; }
+    .tools-title { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--text); }
+    .tools-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 24px; margin-top: 24px; }
+    .tool { background: var(--card); padding: 16px 16px 36px; display: flex; flex-direction: column; gap: 8px; }
+    .tool .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--accent); }
+    .tool h4 { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--text); }
+    .tool p { font-size: 13px; line-height: 20px; color: var(--muted); }
+
+    /* ---------- WHY WORK WITH ME ---------- */
+    .why-head h2 { max-width: 768px; }
+    .why-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 24px; margin-top: 48px; }
+    .why-card { background: var(--card); padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+    .why-icon { width: 40px; height: 40px; border-radius: 9999px; background: var(--chip); display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 8px; }
+    .why-icon svg { width: 16px; height: 16px; }
+    .why-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--text); }
+    .why-card p { font-size: 13px; line-height: 20px; color: var(--muted); }
+    .philosophy {
+      margin-top: 48px;
+      background: var(--card-2);
+      padding: 48px;
+      display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .philosophy .eyebrow { font-size: 11px; letter-spacing: .55px; }
+    .philosophy h2 { font-family: var(--font-display); font-weight: 700; font-size: 48px; line-height: 52px; letter-spacing: -1.44px; text-transform: uppercase; color: var(--text); margin-top: 4px; }
+    .philosophy h2 span { color: var(--accent); display: block; }
+
+    /* ---------- SERVICES & PRICING ---------- */
+    .pricing-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 40px; margin-top: 48px; align-items: stretch; }
+    .tier {
+      background: var(--card); padding: 24px;
+      display: flex; flex-direction: column; gap: 28px; position: relative;
+    }
+    .tier.featured { background: var(--card-2); }
+    .tier .label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .tier.featured .label { color: var(--accent); font-weight: 700; }
+    .tier h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; line-height: 28px; letter-spacing: -.22px; text-transform: uppercase; color: var(--text); margin-top: 4px; }
+    .tier .price { display: flex; align-items: baseline; gap: 4px; margin-top: 16px; }
+    .tier .price strong { font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 36px; color: var(--text); }
+    .tier.featured .price strong { color: var(--accent); }
+    .tier .price small { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .tier .desc { font-size: 13px; line-height: 20px; color: var(--muted); }
+    .tier ul { list-style: none; display: flex; flex-direction: column; gap: 8px; padding-top: 8px; flex: 1; }
+    .tier li { display: flex; gap: 8px; font-family: var(--font-mono); font-size: 11px; line-height: 14px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--text); }
+    .tier li .tick { color: var(--accent); flex-shrink: 0; }
+    .tier .tier-btn { display: block; text-align: center; padding: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .55px; text-transform: uppercase; background: var(--chip); color: var(--text); }
+    .tier.featured .tier-btn { background: var(--accent); color: var(--ink); font-weight: 700; }
+    .tier .tier-btn { margin-top: 24px; }
+    .tier .badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: var(--ink);
+      padding: 4px 12px; font-family: var(--font-mono); font-weight: 700; font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; white-space: nowrap;
+    }
+
+    /* ---------- REVIEWS ---------- */
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 40px; margin-top: 48px; }
+    .review { background: var(--card); padding: 24px; display: flex; flex-direction: column; gap: 40px; }
+    .stars { color: var(--accent); font-size: 12px; letter-spacing: 3px; }
+    .review blockquote { font-size: 15px; line-height: 24px; color: var(--text); }
+    .review-foot { display: flex; flex-direction: column; gap: 4px; padding-top: 16px; }
+    .review-line { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .review-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; text-transform: uppercase; color: var(--text); }
+    .review-role { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--accent); }
+    .review-sub { font-size: 13px; line-height: 20px; color: var(--muted); }
+
+    /* ---------- ABOUT ---------- */
+    .about-grid {
+      display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 40px; margin-top: 48px; align-items: center;
+    }
+    .about-photo { grid-column: 1 / span 5; position: relative; height: 443px; background: var(--chip); overflow: hidden; }
+    .about-photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
+    .about-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #0e0e0e, rgba(14,14,14,0)); }
+    .about-tag {
+      position: absolute; left: 16px; bottom: 16px; z-index: 2;
+      background: rgba(14,14,14,.9); padding: 4px 12px;
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--text);
+    }
+    .about-copy { grid-column: 6 / span 7; display: flex; flex-direction: column; gap: 16px; }
+    .about-copy .sm { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); }
+    .about-copy h2 { font-family: var(--font-display); font-weight: 700; font-size: 48px; line-height: 52px; letter-spacing: -1.44px; text-transform: uppercase; color: var(--text); }
+    .about-copy .intro { font-size: 18px; line-height: 28px; letter-spacing: -.18px; color: var(--muted); }
+    .about-copy p { font-size: 15px; line-height: 24px; color: var(--muted); }
+    .process-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .55px; text-transform: uppercase; color: var(--accent); padding-top: 8px; }
+    .steps { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 8px; padding-top: 4px; }
+    .step { background: var(--card); padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .step .n { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--accent); }
+    .step .t { font-family: var(--font-mono); font-weight: 700; font-size: 12px; line-height: 18px; text-transform: uppercase; color: var(--text); }
+    .quote { font-family: var(--font-mono); font-weight: 700; font-size: 14px; line-height: 18px; text-transform: uppercase; color: var(--accent); padding-top: 4px; }
+
+    /* ---------- FINAL CTA / CONTACT FORM ---------- */
+    .cta-section {
+      position: relative; overflow: hidden;
+      background: var(--bg);
+      padding: 80px 192px;
+      display: flex; justify-content: center;
+    }
+    .cta-glow {
+      position: absolute; right: 0; bottom: 0; width: 500px; height: 500px; border-radius: 9999px;
+      background: rgba(255,194,14,.05); filter: blur(65px); pointer-events: none;
+    }
+    .cta-inner { position: relative; max-width: 896px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+    .cta-inner .chip { font-size: 11px; }
+    .cta-inner h2 { font-family: var(--font-display); font-weight: 700; font-size: 80px; line-height: 84px; letter-spacing: -3.2px; text-transform: uppercase; color: var(--text); }
+    .cta-inner h2 span { color: var(--accent); display: block; }
+    .cta-inner .intro { max-width: 672px; font-size: 18px; line-height: 28px; letter-spacing: -.18px; color: var(--muted); }
+    .cta-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding-top: 8px; }
+    .cta-actions .btn { padding: 16px 48px; }
+    .cta-actions .btn-ghost { padding: 16px 24px; }
+
+    .lead-form {
+      width: 100%;
+      max-width: 560px;
+      margin-top: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+      text-align: left;
+    }
+    .lead-form .field { display: flex; flex-direction: column; gap: 6px; }
+    .lead-form label {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted);
+    }
+    .lead-form input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+    .lead-form input::placeholder { color: #6b6f5a; }
+    .lead-form input:focus { border-color: var(--accent); }
+    .lead-form button[type="submit"] {
+      width: 100%;
+      justify-content: center;
+      cursor: pointer;
+      border: 0;
+    }
+    .lead-form button[disabled] { opacity: .6; cursor: wait; }
+    .form-status {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase;
+      min-height: 16px;
+      text-align: center;
+    }
+    .form-status.ok { color: var(--accent); }
+    .form-status.err { color: var(--danger); }
+
+    .meta-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding-top: 16px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted);
+    }
+    .meta-row a { color: var(--accent); }
+    .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* ---------- FOOTER ---------- */
+    .site-footer { background: var(--bg); }
+    .footer-top {
+      display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 40px; padding: 80px 80px 48px;
+    }
+    .f-brand { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 16px; }
+    .f-brand .row { display: flex; align-items: center; gap: 8px; }
+    .f-brand img { width: 44px; height: 44px; border-radius: 9999px; box-shadow: 0 0 0 1px #353534; }
+    .f-brand .name { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: .7px; text-transform: uppercase; color: var(--text); }
+    .f-brand p { max-width: 384px; font-size: 15px; line-height: 24px; color: var(--muted); }
+    .f-brand .tagline { font-family: var(--font-mono); font-size: 11px; letter-spacing: .55px; text-transform: uppercase; color: var(--accent); }
+    .f-col { display: flex; flex-direction: column; gap: 8px; }
+    .f-col.direct { grid-column: 6 / span 3; }
+    .f-col.network { grid-column: 9 / span 4; align-items: flex-end; text-align: right; }
+    .f-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); }
+    .f-link { font-size: 15px; line-height: 24px; color: var(--accent); }
+    .f-small { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.32px; text-transform: uppercase; color: var(--muted); line-height: 14px; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+      padding: 24px 80px;
+      border-top: 1px solid rgba(42,42,42,.6);
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: .55px; text-transform: uppercase; color: var(--muted);
+    }
+    .footer-bottom a { color: var(--muted); }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    /* ---------- MOBILE NAV DRAWER ---------- */
+    .mobile-nav { display: none; }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 1280px) {
+      .wrap { padding: 0 40px; }
+      .section { padding: 64px 40px; }
+      .hero { padding: 64px 48px; }
+      .header-inner { padding: 0 40px; }
+      .footer-top, .footer-bottom { padding-left: 40px; padding-right: 40px; }
+      .cta-section { padding: 80px 64px; }
+      .hero h1 { font-size: 64px; line-height: 68px; letter-spacing: -2.6px; }
+      .cta-inner h2 { font-size: 64px; line-height: 68px; letter-spacing: -2.6px; }
+    }
+
+    @media (max-width: 1100px) {
+      .nav { display: none; }
+      .menu-toggle { display: block; }
+      .header-right .handle { display: none; }
+      .avail { display: none; }
+      .pricing-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .tools-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .why-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .style-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .work-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .work-card.offset { margin-top: 0; }
+      .f-brand { grid-column: 1 / -1; }
+      .f-col.direct { grid-column: 1 / span 6; }
+      .f-col.network { grid-column: 7 / span 6; }
+    }
+
+    .mobile-nav.open {
+      display: flex; flex-direction: column;
+      position: fixed; top: 80px; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 16px 40px; gap: 4px; z-index: 49;
+    }
+    .mobile-nav a { padding: 12px 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .55px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid rgba(42,42,42,.6); }
+
+    @media (max-width: 860px) {
+      .hero { min-height: 760px; padding: 48px 24px; }
+      .hero h1 { font-size: 44px; line-height: 48px; letter-spacing: -1.8px; }
+      .hero-body { margin: 64px 0; }
+      .hero-sub { font-size: 16px; line-height: 24px; }
+      .hero-bottom .right { display: none; }
+      .section { padding: 56px 24px; }
+      .h2 { font-size: 36px; line-height: 40px; letter-spacing: -1.1px; }
+      .showreel-head, .ba-cols { gap: 16px; }
+      .ba-cols { grid-template-columns: 1fr; }
+      .work-grid, .style-grid, .reviews-grid { grid-template-columns: 1fr; }
+      .work-media { height: 520px; }
+      .edit-row { padding: 20px; }
+      .edit-copy h3 { font-size: 24px; line-height: 30px; }
+      .steps { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .about-photo, .about-copy { grid-column: 1 / -1; }
+      .about-photo { height: 360px; }
+      .philosophy { padding: 32px 24px; }
+      .philosophy h2 { font-size: 36px; line-height: 40px; }
+      .cta-section { padding: 64px 24px; }
+      .cta-inner h2 { font-size: 44px; line-height: 48px; letter-spacing: -1.8px; }
+      .cta-inner .intro { font-size: 16px; line-height: 24px; }
+      .footer-top { padding: 56px 24px 32px; }
+      .footer-bottom { padding: 20px 24px; }
+      .f-col.direct, .f-col.network { grid-column: 1 / -1; align-items: flex-start; text-align: left; }
+      .header-inner { padding: 0 20px; }
+      .header-cta { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .hero h1 { font-size: 36px; line-height: 40px; letter-spacing: -1.2px; }
+      .hero-pill-plain { font-size: 10px; }
+      .tools-strip, .why-grid, .pricing-grid, .steps { grid-template-columns: 1fr; }
+      .brand span { font-size: 12px; }
+      .philosophy h2 { font-size: 30px; line-height: 34px; }
+      .cta-inner h2 { font-size: 36px; line-height: 40px; }
+      .edit-tag { white-space: normal; }
+      .lead-form { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <div style="display:flex; align-items:center; gap:16px;">
+        <a href="#top" class="brand">
+          <img class="logo" src="https://www.figma.com/api/mcp/asset/aee7d682-875a-4b00-8032-62bda6791cf5/c16c2.png" alt="Breakdown Editor logo" />
+          <span>Breakdown</span>
+        </a>
+        <div class="avail"><span class="dot"></span>Available for commissions • Q2 2026</div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#before-after">Before &amp; After</a>
+        <a href="#about">About</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+
+      <div class="header-right">
+        <span class="handle">@breakdown_editor</span>
+        <a href="#contact" class="header-cta">Let's Talk&nbsp;↗</a>
+        <div class="profile"><img src="https://www.figma.com/api/mcp/asset/aee7d682-875a-4b00-8032-62bda6791cf5/b399b.png" alt="Abimanyu" /></div>
+        <button class="menu-toggle" aria-label="Toggle menu" id="menuToggle">☰</button>
+      </div>
+    </div>
+  </header>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <a href="#work">Work</a>
+    <a href="#services">Services</a>
+    <a href="#before-after">Before &amp; After</a>
+    <a href="#about">About</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Let's Talk ↗</a>
+  </nav>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="https://www.figma.com/api/mcp/asset/0a9d51ba-a872-4915-9cf7-24b564b59127/ead55.png" alt="" />
+      </div>
+
+      <div class="hero-top">
+        <div class="hero-pill">
+          <img src="https://www.figma.com/api/mcp/asset/0a9d51ba-a872-4915-9cf7-24b564b59127/c8571.png" alt="" />
+          <span>Breakdown Editor / Video Editor</span>
+        </div>
+        <div class="hero-pill-plain">
+          <span class="dot"></span>
+          Available for commissions • Q2 2026
+        </div>
+      </div>
+
+      <div class="hero-body">
+        <span class="hero-tag">From raw footage → scroll-stopping content</span>
+        <h1>
+          Video editing that<br />
+          makes people <span class="accent">stop</span><br />
+          <span class="accent">scrolling.</span>
+        </h1>
+        <p class="hero-sub">
+          I edit Reels, Shorts, YouTube videos and social media content with a focus on strong hooks, clean storytelling and audience retention.
+        </p>
+        <div class="hero-ctas">
+          <a href="#work" class="btn btn-primary">View my work ↗</a>
+          <a href="https://wa.me/" class="btn btn-ghost-outline">💬 WhatsApp me ↗</a>
+        </div>
+      </div>
+
+      <div class="hero-bottom">
+        <div class="left"><span class="dot"></span>Retention • Speed • Hooks • Sound</div>
+        <a href="#showreel" class="right">Explore showreel ↓</a>
+      </div>
+    </section>
+
+    <!-- ============ 02 SHOWREEL ============ -->
+    <section class="section" id="showreel" style="background:#0e0e0e;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">02 / Showreel</div>
+            <h2 class="h2" style="margin-top:12px;">My best work. In one take.</h2>
+          </div>
+          <p class="lead">A quick look at the edits, transitions, motion graphics, captions and sound design I craft for social-first platforms.</p>
+        </div>
+
+        <div class="showreel-stage">
+          <div class="showreel-frame">
+            <img src="https://www.figma.com/api/mcp/asset/a5c5fdbf-c79d-49d8-888b-2bfd122961b2/da261.png" alt="Editing suite showreel preview" />
+            <div class="showreel-top">
+              <span class="chip"><span class="dot"></span>Active reel // 2026 edition</span>
+              <div class="showreel-tags"><span>9:16 ready</span><span>16:9 4K</span></div>
+            </div>
+            <div class="play-wrap">
+              <button class="play-btn" aria-label="Play showreel">
+                <svg viewBox="0 0 22 28" aria-hidden="true"><path d="M0 0 L22 14 L0 28 Z" fill="#111"/></svg>
+              </button>
+              <span class="play-label">Tap to play (00:45)</span>
+            </div>
+            <div class="showreel-bottom">
+              <span>Audio track: Original SFX + Kinetic Mix</span>
+              <span>Bitrate: 85 Mbps &nbsp;&nbsp; Color: Rec.709 Film LUT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 WHAT I EDIT ============ -->
+    <section class="section" style="background:#131313;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">03 / What I Edit</div>
+            <h2 class="h2" style="margin-top:12px;">Content that's built for<br />social media.</h2>
+          </div>
+          <p class="lead">Different formats need different pacing. I adapt cuts to match your audience, platform heuristics, and creator identity.</p>
+        </div>
+
+        <div class="edit-list">
+          <div class="edit-row">
+            <div class="edit-main">
+              <span class="edit-num">01</span>
+              <div class="edit-copy">
+                <h3>Reels &amp; Shorts</h3>
+                <p>Fast, engaging edits designed to hook instantly and keep viewers watching till the final loop.</p>
+              </div>
+            </div>
+            <span class="edit-tag">Hook + Loop Engine <span class="go">→</span></span>
+          </div>
+          <div class="edit-row">
+            <div class="edit-main">
+              <span class="edit-num">02</span>
+              <div class="edit-copy">
+                <h3>YouTube Videos</h3>
+                <p>Clean cuts, better visual pacing, B-roll layering, and long-form storytelling that keeps the video moving smoothly.</p>
+              </div>
+            </div>
+            <span class="edit-tag">Long-form storytelling <span class="go">→</span></span>
+          </div>
+          <div class="edit-row">
+            <div class="edit-main">
+              <span class="edit-num">03</span>
+              <div class="edit-copy">
+                <h3>Talking Head &amp; Podcasts</h3>
+                <p>Remove the awkward pauses, highlight critical insights, and make every spoken sentence punchy and clear.</p>
+              </div>
+            </div>
+            <span class="edit-tag">Subtitles + highlights <span class="go">→</span></span>
+          </div>
+          <div class="edit-row">
+            <div class="edit-main">
+              <span class="edit-num">04</span>
+              <div class="edit-copy">
+                <h3>Business &amp; Brand Videos</h3>
+                <p>Professional, polished conforming that elevates your brand identity, product trust, and executive positioning.</p>
+              </div>
+            </div>
+            <span class="edit-tag">Agency grade <span class="go">→</span></span>
+          </div>
+          <div class="edit-row">
+            <div class="edit-main">
+              <span class="edit-num">05</span>
+              <div class="edit-copy">
+                <h3>Promotional &amp; Performance Ads</h3>
+                <p>High-converting direct response cuts designed to capture buyer focus and drive click-through actions.</p>
+              </div>
+            </div>
+            <span class="edit-tag">Conversion focus <span class="go">→</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 SELECTED WORK ============ -->
+    <section class="section" id="work" style="background:#0e0e0e;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">04 / Selected Work</div>
+            <h2 class="h2" style="margin-top:12px;">A few edits I'm proud of.</h2>
+          </div>
+          <p class="lead">Every project has a different goal. Some are made to entertain, some to educate, and some to sell. Here is how they performed.</p>
+        </div>
+
+        <div class="work-grid">
+          <article class="work-card">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/05a4c.png" alt="Creator viral reel" />
+              <span class="work-badge">1.8M views • 84% retention</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>Creator viral reel</span><span>00:32</span></div>
+              <h4>Retention / Motion Graphics</h4>
+              <p>Kinetic pacing, sound effects on every visual change, and punch-ins that saved a drop-off at second 4.</p>
+            </div>
+          </article>
+
+          <article class="work-card offset">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/54ba7.png" alt="Founder talking head reel" />
+              <span class="work-badge">920K views • 71% retention</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>Founder talking head</span><span>00:54</span></div>
+              <h4>Captions &amp; Sound FX Conforming</h4>
+              <p>Eliminated 28 seconds of dead air, added bespoke typographic callouts and subtle low-end risers.</p>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/d6a21.png" alt="Fintech product launch commercial" />
+              <span class="work-badge">Brand reel • 4.2x conversion</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>Fintech commercial</span><span>00:28</span></div>
+              <h4>Product Launch Commercial 9:16</h4>
+              <p>High-polish commercial pacing, dynamic mockups, and bold motion graphics built for immediate downloads.</p>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/9fdbb.png" alt="Fitness influencer reel" />
+              <span class="work-badge">2.4M reel reach</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>Fitness influencer</span><span>00:21</span></div>
+              <h4>High Velocity Speed Ramping</h4>
+              <p>Zero filler. Speed-ramped lifts synchronized with heavy bass drops to trigger instant loop repeats.</p>
+            </div>
+          </article>
+
+          <article class="work-card offset">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/71a2d.png" alt="Tech desk review" />
+              <span class="work-badge">510K YouTube views</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>Tech desk review</span><span>08:14</span></div>
+              <h4>YouTube Chapter Pacing &amp; B-Roll</h4>
+              <p>Seamless multi-cam switching, color conformed macro B-roll, and custom lower-third specs.</p>
+            </div>
+          </article>
+
+          <article class="work-card">
+            <div class="work-media">
+              <img src="https://www.figma.com/api/mcp/asset/4bc50e99-2f82-45f6-bde2-4f3e11cd5557/383db.png" alt="E-commerce hook ad" />
+              <span class="work-badge">5.1 ROAS • Paid social</span>
+            </div>
+            <div class="work-body">
+              <div class="work-meta"><span>E-commerce hook ad</span><span>00:19</span></div>
+              <h4>First-3-Second Conversion Hook</h4>
+              <p>Tested 4 alternating visual hooks in the opening 2.5 seconds to capture ad scrollers immediately.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 BEFORE → AFTER ============ -->
+    <section class="section" id="before-after" style="background:#131313;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">05 / Before → After</div>
+            <h2 class="h2" style="margin-top:12px;">Raw footage is just the<br />beginning.</h2>
+          </div>
+          <p class="lead">The difference isn't just adding transitions. It's knowing what to cut, what to keep, when to zoom, where to add sound, and how to keep the viewer locked in.</p>
+        </div>
+
+        <div class="ba-wrap">
+          <div class="ba-canvas" id="baCanvas">
+            <img class="final" src="https://www.figma.com/api/mcp/asset/624a505b-ed2a-4058-953e-7d5c52eade5e/8f122.png" alt="Final master edit" />
+            <img class="raw" src="https://www.figma.com/api/mcp/asset/624a505b-ed2a-4058-953e-7d5c52eade5e/46635.png" alt="Raw flat footage" />
+            <span class="ba-label left">[Raw flat footage]</span>
+            <span class="ba-label right">[Final master edit]</span>
+            <div class="ba-handle"><span>‹›</span></div>
+            <input class="ba-range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Compare raw and final edit" />
+          </div>
+
+          <div class="ba-cols">
+            <div class="ba-col">
+              <div class="ba-col-head"><span class="dot" style="background:var(--danger)"></span>Raw unedited footage</div>
+              <ul>
+                <li><span class="mark x">[×]</span>Long pauses, umms, and repetitive sentences</li>
+                <li><span class="mark x">[×]</span>Flat, muddy camera LOG look without visual pop</li>
+                <li><span class="mark x">[×]</span>Monotonous single static framing leads to immediate drop-off</li>
+                <li><span class="mark x">[×]</span>Zero audio impact or emphasis on key messages</li>
+              </ul>
+            </div>
+            <div class="ba-col after">
+              <div class="ba-col-head"><span class="dot"></span>The Breakdown conform</div>
+              <ul>
+                <li><span class="mark ok">[✓]</span>Tighter pacing with 100% of wasted air eliminated</li>
+                <li><span class="mark ok">[✓]</span>Dynamic kinetic subtitles and graphic focal points</li>
+                <li><span class="mark ok">[✓]</span>Punch zooms, angle switches, and pacing rhythm</li>
+                <li><span class="mark ok">[✓]</span>Layered risers, swooshes, subtle bass hits &amp; custom LUT grade</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ba-cta">
+            <a href="#contact" class="btn btn-primary">See what we can do with your raw footage ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 EDITING STYLE ============ -->
+    <section class="section" style="background:#0e0e0e;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">06 / Editing Style</div>
+            <h2 class="h2" style="margin-top:12px;">Editing isn't about adding<br />more. It's about adding<br />what matters.</h2>
+          </div>
+          <p class="lead">A disciplined aesthetic that balances energetic modern motion with clean readability.</p>
+        </div>
+
+        <div class="style-grid">
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>01</b><span>Velocity</span></div>
+              <h3>Fast-Paced Cuts</h3>
+              <p>Pacing tailored to the beat and emotion of the video. No random jarring speedups — only intentional momentum that holds attention.</p>
+            </div>
+            <div class="style-foot">Punch zooms • Speed ramps • Match cuts</div>
+          </div>
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>02</b><span>Typography</span></div>
+              <h3>Clean Captions</h3>
+              <p>Easy to read, perfectly timed, styled to fit the mood. Subtitles that enhance comprehension without feeling like clutter.</p>
+            </div>
+            <div class="style-foot">Highlight active word • Custom fonts • Sound-sync</div>
+          </div>
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>03</b><span>Graphics</span></div>
+              <h3>Motion Graphics</h3>
+              <p>Custom overlays, icons, tracking callouts, and clean animations that clarify complex thoughts and explain concepts faster.</p>
+            </div>
+            <div class="style-foot">After Effects compositing • Vector overlays</div>
+          </div>
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>04</b><span>Audio</span></div>
+              <h3>Sound Design</h3>
+              <p>Good audio makes an edit feel premium. Whooshes, risers, impacts, and balanced dialogue leveling keep the experience punchy.</p>
+            </div>
+            <div class="style-foot">Foley • Risers • Stereo mastering • Ducking</div>
+          </div>
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>05</b><span>Analytics</span></div>
+              <h3>Retention Editing</h3>
+              <p>Every second has a purpose. We identify potential boredom spots and inject pattern interrupts to keep the average view duration high.</p>
+            </div>
+            <div class="style-foot">Pattern interrupts • Visual hooks • Loop closing</div>
+          </div>
+          <div class="style-card">
+            <div>
+              <div class="style-top"><b>06</b><span>Look &amp; Feel</span></div>
+              <h3>Color Grading</h3>
+              <p>From flat dull mobile or camera sensors to rich cinematic tones. Natural skin tones, filmic contrast curves, and consistent color palettes.</p>
+            </div>
+            <div class="style-foot">DaVinci color wheels • LUT matching • Rec709</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 SOFTWARE ============ -->
+    <section class="section" style="background:#131313; padding-top:48px; padding-bottom:48px;">
+      <div class="wrap" style="padding:0;">
+        <div class="tools-head">
+          <div class="eyebrow">07 / Software</div>
+          <div class="tools-title">The tools behind the edits.</div>
+        </div>
+        <div class="tools-strip">
+          <div class="tool">
+            <span class="k">01 // Conform</span>
+            <h4>Premiere Pro</h4>
+            <p>Timeline assembly, rough cut pacing, multi-cam sync &amp; storytelling.</p>
+          </div>
+          <div class="tool">
+            <span class="k">02 // Motion</span>
+            <h4>After Effects</h4>
+            <p>Kinetic typography, tracking overlays, 2D visual effects &amp; UI mockups.</p>
+          </div>
+          <div class="tool">
+            <span class="k">03 // Color</span>
+            <h4>DaVinci Resolve</h4>
+            <p>Node-based color science, accurate skin tone balance &amp; film look emulations.</p>
+          </div>
+          <div class="tool">
+            <span class="k">04 // Social</span>
+            <h4>CapCut Desktop</h4>
+            <p>High-speed social workflows, trending sound extraction &amp; rapid cut exports.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 08 WHY WORK WITH ME ============ -->
+    <section class="section" style="background:#0e0e0e;">
+      <div class="wrap" style="padding:0;">
+        <div class="why-head">
+          <div class="eyebrow">08 / Why Work With Me</div>
+          <h2 class="h2" style="margin-top:12px;">You don't need another editor.<br />You need someone who<br />understands your content.</h2>
+        </div>
+
+        <div class="why-grid">
+          <div class="why-card">
+            <div class="why-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9 1 L3 9 H7.5 L6.5 15 L13 6.5 H8.5 Z"/></svg></div>
+            <h3>Fast<br />Communication</h3>
+            <p>No ghosting. Direct WhatsApp or Telegram access with updates as edits progress. Average response time under 2 hours.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5 V8 L10.5 9.5"/></svg></div>
+            <h3>On-Time Delivery</h3>
+            <p>Consistent content schedules require dependable editors. You will receive draft exports when promised, every single time.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 11.5 L6 7 L9 10 L14.5 4.5"/><path d="M10.5 4.5 H14.5 V8.5"/></svg></div>
+            <h3>Social-Media<br />Focused</h3>
+            <p>I consume and analyze reels and videos daily. I know what the algorithms prioritize and what makes actual humans watch.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 8 A5.5 5.5 0 0 1 12.5 5"/><path d="M12.5 2.5 V5 H10"/><path d="M13.5 8 A5.5 5.5 0 0 1 3.5 11"/><path d="M3.5 13.5 V11 H6"/></svg></div>
+            <h3>Revision Support</h3>
+            <p>Clear, cooperative revision passes until the edit feels completely aligned with your vision. No awkward friction.</p>
+          </div>
+        </div>
+
+        <div class="philosophy">
+          <div>
+            <div class="eyebrow">The philosophy</div>
+            <h2>Good editing gets attention.<span>Great editing keeps it.</span></h2>
+          </div>
+          <a href="#contact" class="btn btn-primary" style="padding:14px 16px; font-size:14px; letter-spacing:1.12px;">Let's level up ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 09 SERVICES & PRICING ============ -->
+    <section class="section" id="services" style="background:#131313;">
+      <div class="wrap" style="padding:0;" id="pricing">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">09 / Services &amp; Pricing</div>
+            <h2 class="h2" style="margin-top:12px;">Simple packages. Flexible<br />for your content.</h2>
+          </div>
+          <p class="lead">Transparent rates with no hidden conformity fees. Choose a single test project or lock in monthly production volume.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="tier">
+            <div>
+              <div class="label">Starter test pass</div>
+              <h3>Single Reel</h3>
+              <div class="price"><strong>₹700</strong><small>/ video</small></div>
+            </div>
+            <p class="desc">Perfect test package to experience the pacing and turnaround before committing to a larger volume.</p>
+            <ul>
+              <li><span class="tick">[✓]</span>1 High-Retention Reel / Short</li>
+              <li><span class="tick">[✓]</span>Clean Captions &amp; Highlights</li>
+              <li><span class="tick">[✓]</span>Basic Sound FX &amp; Mixing</li>
+              <li><span class="tick">[✓]</span>24–48hr Turnaround</li>
+              <li><span class="tick">[✓]</span>2 Revision Rounds</li>
+            </ul>
+            <a href="#contact" class="tier-btn">Get started →</a>
+          </div>
+
+          <div class="tier">
+            <div>
+              <div class="label">Monthly consistency</div>
+              <h3>10 Reels</h3>
+              <div class="price"><strong>₹6,500</strong><small>/ month</small></div>
+            </div>
+            <p class="desc">For creators aiming to post 2-3 high quality videos per week without editorial headaches.</p>
+            <ul>
+              <li><span class="tick">[✓]</span>10 Engineered Short-Form Videos</li>
+              <li><span class="tick">[✓]</span>Kinetic Typography &amp; B-Roll</li>
+              <li><span class="tick">[✓]</span>Full Sound Design &amp; Risers</li>
+              <li><span class="tick">[✓]</span>Dedicated Turnaround Slot</li>
+              <li><span class="tick">[✓]</span>Fast WhatsApp Communication</li>
+            </ul>
+            <a href="#contact" class="tier-btn">Let's talk →</a>
+          </div>
+
+          <div class="tier featured">
+            <span class="badge">Recommended</span>
+            <div>
+              <div class="label">Full content retention</div>
+              <h3>20 Reels</h3>
+              <div class="price"><strong>₹12,000</strong><small>/ month</small></div>
+            </div>
+            <p class="desc">Our most popular retainers for personal brands and founders seeking aggressive daily reach.</p>
+            <ul>
+              <li><span class="tick">[✓]</span>20 Master Edited Reels / Shorts</li>
+              <li><span class="tick">[✓]</span>Motion Graphics &amp; Custom Overlays</li>
+              <li><span class="tick">[✓]</span>Advanced DaVinci Color Grading</li>
+              <li><span class="tick">[✓]</span>Priority Queue Turnaround</li>
+              <li><span class="tick">[✓]</span>Unlimited Minor Tweaks</li>
+            </ul>
+            <a href="#contact" class="tier-btn">Let's work together →</a>
+          </div>
+
+          <div class="tier">
+            <div>
+              <div class="label">Bespoke scope</div>
+              <h3>Custom Project</h3>
+              <div class="price"><strong>Custom</strong><small>quote</small></div>
+            </div>
+            <p class="desc">For YouTube episodes, documentary storytelling, commercial confections, or high-tier agency campaigns.</p>
+            <ul>
+              <li><span class="tick">[✓]</span>Long-Form YouTube (10–30 min)</li>
+              <li><span class="tick">[✓]</span>Multi-Camera Conforming</li>
+              <li><span class="tick">[✓]</span>Commercial Brand Films</li>
+              <li><span class="tick">[✓]</span>Custom Soundscapes &amp; VO Sync</li>
+              <li><span class="tick">[✓]</span>Dedicated Timeline Manager</li>
+            </ul>
+            <a href="#contact" class="tier-btn">Discuss your project →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10 CLIENT REVIEWS ============ -->
+    <section class="section" style="background:#0e0e0e;">
+      <div class="wrap" style="padding:0;">
+        <div class="showreel-head">
+          <div>
+            <div class="eyebrow">10 / Client Reviews</div>
+            <h2 class="h2" style="margin-top:12px;">Don't take my word for it.</h2>
+          </div>
+          <p class="lead">Feedback from creators and brand founders who outsourced their timeline cuts to BREAKDOWN EDITOR.</p>
+        </div>
+
+        <div class="reviews-grid">
+          <article class="review">
+            <div>
+              <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote style="margin-top:8px;">"Before Abimanyu, our average view duration sat around 38%. In less than 3 weeks of re-editing our short-form content with tighter hook trims and cleaner typography, our retention spiked to 65%."</blockquote>
+            </div>
+            <div class="review-foot">
+              <div class="review-line"><span class="review-name">Rohan Sen</span><span class="review-role">320K subscribers</span></div>
+              <div class="review-sub">Tech &amp; Productivity Creator</div>
+            </div>
+          </article>
+
+          <article class="review">
+            <div>
+              <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote style="margin-top:8px;">"I record rough 5-minute talking head rambles on my phone. He transforms them into sharp, articulate 45-second insights with zero fluff. Working with him gave me back 15 hours every month."</blockquote>
+            </div>
+            <div class="review-foot">
+              <div class="review-line"><span class="review-name">Priya Malhotra</span><span class="review-role">Founder &amp; Angel</span></div>
+              <div class="review-sub">SaaS Founder &amp; Keynote Speaker</div>
+            </div>
+          </article>
+
+          <article class="review">
+            <div>
+              <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote style="margin-top:8px;">"Turnaround is ridiculously fast. More importantly, he actually listens to sound cues. The speed ramps match the basslines perfectly without feeling like a generic CapCut template."</blockquote>
+            </div>
+            <div class="review-foot">
+              <div class="review-line"><span class="review-name">Arjun Das</span><span class="review-role">Fitness Coach</span></div>
+              <div class="review-sub">Athletic Coach &amp; Brand Owner</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11 ABOUT ============ -->
+    <section class="section" id="about" style="background:#131313;">
+      <div class="wrap" style="padding:0;">
+        <div class="eyebrow">11 / About</div>
+
+        <div class="about-grid">
+          <div class="about-photo">
+            <img src="https://www.figma.com/api/mcp/asset/9e9e180e-a255-425a-a78c-b164e61e6a41/a30ff.png" alt="Abimanyu — Founder and Lead Editor at Breakdown Editor" />
+            <div class="about-tag"><span class="dot"></span>Abimanyu // Founder &amp; Lead Conformist</div>
+          </div>
+
+          <div class="about-copy">
+            <span class="sm">Breakdown Editor / Abimanyu</span>
+            <h2>Hey, I'm Abimanyu.</h2>
+            <p class="intro">I started editing because I enjoyed taking ordinary, unstructured footage and transforming it into something people actually want to watch.</p>
+            <p>Today, I focus mainly on Reels, Shorts, YouTube content, and high-velocity social-media videos—helping ambitious creators and modern businesses turn raw mobile or studio files into content that feels sharp, engaging, and undeniably professional.</p>
+
+            <div class="process-label">My editorial process</div>
+            <div class="steps">
+              <div class="step"><span class="n">Step 01</span><span class="t">Understand Content</span></div>
+              <div class="step"><span class="n">Step 02</span><span class="t">Find Story</span></div>
+              <div class="step"><span class="n">Step 03</span><span class="t">Cut Junk</span></div>
+              <div class="step"><span class="n">Step 04</span><span class="t">Build Pace</span></div>
+              <div class="step"><span class="n">Step 05</span><span class="t">Retention Lock</span></div>
+            </div>
+
+            <p class="quote">"I'm not here to make your videos unnecessarily complicated. I'm here to make them better."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 12 CTA + CONTACT FORM ============ -->
+    <section class="cta-section" id="contact">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-inner">
+        <span class="chip"><span class="dot"></span>12 / Let's work together</span>
+
+        <h2>Have a video that<span>needs editing?</span></h2>
+
+        <p class="intro">Send me your footage, a brief idea, or even just a rough loom video explaining what you want to achieve. Let's figure out the sharpest way to turn it into content worth watching.</p>
+
+        <form class="lead-form" id="leadForm" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+91 00000 00000" autocomplete="tel" required />
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Let's work together ↗</button>
+          <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="cta-actions">
+          <a href="https://wa.me/" class="btn btn-ghost">💬 WhatsApp me</a>
+        </div>
+
+        <div class="meta-row">
+          <span>◷ Replies usually within 2 hours</span>
+          <a href="https://instagram.com/breakdown_editor" target="_blank" rel="noopener">@breakdown_editor</a>
+          <a href="mailto:hello@breakdowneditor.com">hello@breakdowneditor.com</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="f-brand">
+        <div class="row">
+          <img src="https://www.figma.com/api/mcp/asset/3078cf07-82b6-4dba-82c8-5f263c1f9d59/c16c2.png" alt="Breakdown Editor logo" />
+          <span class="name">Breakdown Editor</span>
+        </div>
+        <p>Post-production screening suite, offline edit boutique, and high-velocity pacing atelier led by Abimanyu.</p>
+        <span class="tagline">Made for content that deserves attention.</span>
+      </div>
+
+      <div class="f-col direct">
+        <span class="f-label">Direct line</span>
+        <a class="f-link" href="mailto:hello@breakdowneditor.com">hello@breakdowneditor.com</a>
+        <a class="f-link" href="https://wa.me/">WhatsApp Direct</a>
+        <span class="f-small">Abimanyu — Lead Editor &amp; Colorist</span>
+      </div>
+
+      <div class="f-col network">
+        <span class="f-label">Dispatches &amp; network</span>
+        <a class="f-link" href="https://instagram.com/breakdown_editor" target="_blank" rel="noopener">Instagram: @breakdown_editor</a>
+        <span class="f-small">UTC+7 Screening Suite // Remote Worldwide</span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Breakdown Editor. All rights reserved.</span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ---------- Config ---------- */
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0RMvgT7z8Hcr6-6G3-g3HBhw45jllcCfQDnu_JY9uc7VNkm6JZoZHezu523COnFnA/exec";
+
+    /* ---------- Mobile menu ---------- */
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileNav = document.getElementById("mobileNav");
+    menuToggle.addEventListener("click", () => {
+      mobileNav.classList.toggle("open");
+    });
+    mobileNav.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => mobileNav.classList.remove("open"));
+    });
+
+    /* ---------- Before / After slider ---------- */
+    const baCanvas = document.getElementById("baCanvas");
+    const baRange = document.getElementById("baRange");
+    function setSplit(value) {
+      baCanvas.style.setProperty("--split", value + "%");
+    }
+    baRange.addEventListener("input", e => setSplit(e.target.value));
+    setSplit(baRange.value);
+
+    /* ---------- Contact form -> Google Sheets ---------- */
+    const form = document.getElementById("leadForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusEl = document.getElementById("formStatus");
+
+    function showSuccess() {
+      statusEl.className = "form-status ok";
+      statusEl.textContent = "Thanks! Your details have been received.";
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Let's work together ↗";
+    }
+
+    function showError() {
+      statusEl.className = "form-status err";
+      statusEl.textContent = "Something went wrong. Please try again.";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Let's work together ↗";
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+
+      if (!name || !email || !phone) {
+        statusEl.className = "form-status err";
+        statusEl.textContent = "Please fill in name, email and phone.";
+        return;
+      }
+
+      statusEl.className = "form-status";
+      statusEl.textContent = "";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      const url = SCRIPT_URL + "?" + new URLSearchParams({ name, email, phone });
+
+      fetch(url, { method: "GET", mode: "no-cors" })
+        .then(() => showSuccess())
+        .catch(() => showError());
+    });
+  </script>
+</body>
+</html>
